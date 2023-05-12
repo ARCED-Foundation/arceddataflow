@@ -40,6 +40,57 @@
 	
 
 	
+**# Enum Performance: Missing values
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+	preserve 
+		glevelsof ${enumid}, clean loc(enumids)
+		
+		ds, has(type numeric)	
+		loc numvars = "`r(varlist)'"
+		
+		matrix Enum = J(`: word count `enumids'', 3, .)
+		
+		loc i = 1
+		qui foreach enum of loc enumids {
+			loc enumdk 	= 0
+			loc enumref = 0
+			loc nomiss 	= 0
+			
+			foreach var of loc numvars {
+				count if !mi(`var') & enumid=="`enum'"
+				loc nomiss = `nomiss' + r(N)
+				
+				count if `var'==.d & enumid=="`enum'"
+				loc enumdk = `enumdk' + r(N)
+				
+				count if `var'==.r & enumid=="`enum'"
+				loc enumref = `enumref' + r(N)			
+			}
+			
+			mat Enum [`i', 1] = `enumdk'
+			mat Enum [`i', 2] = `enumref'
+			mat Enum [`i', 3] = `nomiss'
+			loc ++i
+		}
+
+		mat colnames Enum = DK REF NOMISS
+		mat list Enum
+		
+		clear
+		svmat Enum, names(col)
+		mat drop Enum
+		g dk_per 	= DK  / (DK  + NOMISS)
+		g ref_per 	= REF / (REF + NOMISS)
+		
+		export excel 		dk_per	ref_per ///
+							using "${outfile_hfc}", ///
+							sh("EnumPerformance")  		///
+							sheetmodify 			///
+							cell(S2) 				///
+							keepcellfmt  		
+	restore 
+	
+	
 **# Check 1: Summarize completed surveys by date
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	  
