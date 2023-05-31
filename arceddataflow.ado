@@ -26,3 +26,6 @@ program  arceddataflow
 			 
 		copy "https://github.com/ARCED-Foundation/arceddataflow/raw/master/dos/00_master.do" ///
 			 "`dofiles'/04_checks.do"
+
+			 
+end
