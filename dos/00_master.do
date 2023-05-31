@@ -7,14 +7,14 @@
 ║                                                                               ║
 ║-------------------------------------------------------------------------------║
 ║    TITLE:          00_master.do                                               ║
-║    PROJECT:        Test Project                                               ║
+║    PROJECT:        TRK_followup_survey_2023                                   ║
 ║    PURPOSE:        Master do file for dataflow                                ║
 ║-------------------------------------------------------------------------------║
-║    AUTHOR:         [YOUR NAME], ARCED Foundation                              ║
-║    CONTACT:        [YOUR.EMAIL]@arced.foundation                              ║
+║    AUTHOR:                                                                    ║
+║    CONTACT:                                                                   ║
 ║-------------------------------------------------------------------------------║
-║    CREATED:        03 December 2022                                           ║
-║    MODIFIED:       28 April 2023                                              ║
+║    CREATED:                                                                   ║
+║    MODIFIED:                                                                  ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
                                                                                                                                                                                                    */                                                                                                                                                                                                 */
@@ -32,8 +32,6 @@
 	do "01_setup.do"
 	
 	
-	
-	
 	**# 02_import.do
 	/*---------------------------------------------------	
 	
@@ -44,22 +42,19 @@
 
 	do "02_import.do"
 	
-	
-	
+		
 	**# 03_prep.do
 	/*---------------------------------------------------	
 	
 		03_prep.do includes all the preparatory works
-		for data, including data downloading (optional),
-		data labeling, variable renaming, manual data 
-		corrections and basic cleaning.
+		for data, data labeling, variable renaming, 
+        manual data corrections and basic cleaning.
 	
 	----------------------------------------------------*/
 
 	do "03_prep.do"
 	
-	
-	
+		
 	**# 04_checks.do
 	/*---------------------------------------------------	
 	

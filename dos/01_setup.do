@@ -7,14 +7,14 @@
 ║                                                                               ║
 ║-------------------------------------------------------------------------------║
 ║    TITLE:          01_setup.do                                                ║
-║    PROJECT:        Test Project                                               ║
+║    PROJECT:        SCS_Mask_BD_2022                                           ║
 ║    PURPOSE:        All setup for the Data Flow                                ║
 ║-------------------------------------------------------------------------------║
-║    AUTHOR:         [YOUR NAME], ARCED Foundation                              ║
-║    CONTACT:        [YOUR.EMAIL]@arced.foundation                              ║
+║    AUTHOR:         Md. Zahirul Islam, ARCED Foundation                        ║
+║    CONTACT:        zahirul.islam@arced.foundation                             ║
 ║-------------------------------------------------------------------------------║
-║    CREATED:        03 December 2022                                           ║
-║    MODIFIED:       28 April 2023                                              ║
+║    CREATED:        12 May 2023                                                ║
+║    MODIFIED:       23 May 2023                                                ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
                                                                                                                                                                                                        */
 
@@ -63,17 +63,14 @@ qui {
 	if _rc 		net install odksplit, all replace ///
 				from("https://raw.githubusercontent.com/ARCED-Foundation/odksplit/master")
 	
-	** Install parallel 
-	cap which 	parallel
-	if _rc 		net install parallel, ///
-				from("https://raw.github.com/gvegayon/parallel/stable/") replace
-	mata mata 	mlib index
-	
 	** Install gtools 
 	cap which 	gtools
 	if _rc 		ssc install gtools, all replace 
 
-
+	** Install gtools 
+	cap which 	arced_mount_file
+	if _rc 		net install arced_mount_file, all replace ///
+				from("https://raw.githubusercontent.com/ARCED-Foundation/arceddataflow/master/ados")
 	
 **# Switches
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
@@ -84,14 +81,14 @@ qui {
 	gl 	sctodownload			0		// Download data from SurveyCTO		
 		* Globals for SurveyCTO api download
 		*-----------------------------------
-		gl formid			"apwp_confirmation"
+		gl formid			"ssc_bd_23"
 		gl sctodataloc		"X:"
 		
 	gl 	odkdownload				0		// Download data from ARCED ODK server	
 		* Globals for ARCED ODK server api download
 		*------------------------------------------
 	
-	gl	manualdownload			0		// Download data manually	
+	gl	manualdownload			1		// Download data manually	
 		* Globals for manual download
 		*----------------------------
 		gl 	sctodesktoploc	"C:\Users\\`=c(username)'\AppData\local\Programs\SurveyCTODesktop\SurveyCTO Desktop.exe"
@@ -101,12 +98,15 @@ qui {
 	**# Actions
 	*---------------------------
 	gl 	data_correction			1
-	gl 	pii_correction			1
-	
+	gl 	pii_correction			0
+	gl	odksplit 				0
+		gl 	sctoimportdo 	"02b_datalabel.do"
+
 	
 	**# Preferences
 	*---------------------------
-	gl	warning 				0
+	gl	warning 				1
+	gl	encrypt 				1
 	
 	
 	
@@ -131,18 +131,27 @@ qui {
 	--------------------------------------------------------------------------*/
 	
 	** Data files
-	gl 	container			"${cwd}/../03_Data/02_Raw/rawdata"
-	gl 	rawdata				"X:/APWP Confirmation Survey_WIDE.csv"
-	gl 	deidentified		"${cwd}/../03_Data/04_Intermediate/APWP Confirmation Survey.dta"
-// 	gl 	cleandata			"${cwd}/../03_Data/05_Clean/APWP Confirmation Survey_clean.dta"
-	gl 	cleandata			"${cwd}/../03_Data/05_Clean/Father_baseline_prep.dta"
+	gl 	container			"${cwd}/../03_Data/02_Raw/rawdata_phone"
+	gl 	rawdata				"X:/Social Contact Survey 2023_WIDE.csv"
+	gl 	rawdatadta			`"`=regexr("${rawdata}", ".csv", ".dta")'"'
+	gl	mediafolder			"X:/media"
+	
+	gl 	deidentified		"${cwd}/../03_Data/04_Intermediate/Social Contact Survey 2023.dta"
+ 	gl 	cleandata			"${cwd}/../03_Data/05_Clean/Social Contact Survey 2023_clean.dta"
+	gl 	textauditdata		"${cwd}/../03_Data/02_Raw/Text_audit_data.dta"
+	gl 	commentsdata		"${cwd}/../03_Data/02_Raw/Comments_data.dta"
+	
 	
 	** Correction files
 	gl	correctionsheet		"${cwd}/../03_Data/03_Corrections/Correction_sheet.xlsx"
 	gl	pii_correction_file	"X:/pii_correction.xlsx"
+	gl  correction_log		"${cwd}/../04_Output/01_Logs/Correction_log_`c(current_date)'.xlsx"
 	
 	** Outfile
 	gl 	outfile_hfc			"${cwd}/../04_Output/02_Checks/Check_report.xlsx"
+	
+	** 	audio_audit folder
+	gl 	audit_folder		"../../../03_FieldWork/02_Phone_Call/05_Audio_audit"
 
 
 **# Data preparation
@@ -162,15 +171,15 @@ qui {
 	
 	--------------------------------------------------------------------------*/
 	
-	gl 	xlsform				"${cwd}/../01_Instruments/02_XLSForm/APWP Confirmation Survey.xlsx"	
-	gl 	media				"text audio"																									
+	gl 	xlsform				"${cwd}/../01_Instruments/02_XLSForm/Social Contact Survey_23.xlsx"	
+	gl 	media				"audio_audit text_audit"
+	gl 	text_audit			"text_audit"
+	gl	sctocomments		""
 	gl 	uid					"key"
-	gl 	sid					"hhid_final"
+	gl 	sid					"id"
 	
 							#d ;	
-	gl  PIIs				" 	enumname landmark ph
-								upazila firm_name firmaddress 
-								resp_que respondent_name	
+	gl  PIIs				" 	upazilaname unionname villagename	gps* 
 							" ;	
 							#d cr	
 	
@@ -190,8 +199,8 @@ qui {
 	
 	--------------------------------------------------------------------------*/
 	
-	gl 	surveystart			"01feb2023"
-	gl 	targetsample		"2000"
+	gl 	surveystart			"14may2023"
+	gl 	targetsample		"3000"
 	
 	gl 	startdate			"startdate"
 	gl 	starttime			"starttime"
@@ -199,26 +208,36 @@ qui {
 	gl 	endtime				"endtime"
 	gl 	duration			"duration"
 	
-	gl  consent				"consent_final"
+	gl  consent				"availability"
 	gl 	enumid				"enumid"
-	gl 	enumname 			""
+	gl 	enumname 			"enumname"
 	
 	gl 	dk					"-99"
-	gl 	ref					"-98"	
+	gl 	ref					"-98"
+	
+	gl 	enumcomments		"comments"
 	
 	
 **# Check preferances
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
+	* Duplicates from other variables 
+	gl 	otherdupvars		"phonenumber_called "
+	
 	* Outliers
 	gl	outkeepvars			""
 	gl 	sd					3
-	gl	comboutvars			"age_* dob_* gender_*"
+	gl	comboutvars			"age_year_*  time_spent_* person_age_* age_* interact_time_* meet_people_*"
 								
 							#d ;	
-	gl  outexclude			" 	pct_conversation pct_moving pct_still pct_quiet
-								mean_light_level mean_sound_level consent_1
-								mean_sound_pitch backcheck_rand	
+	gl  outexclude			" 	activity_*	addplace collect_phone_app contacts 
+								eligible_*  totalrepeat rand* *_sl* select_mem_id_*
+								select_mem_num_* place_house_* *phone* hh_member_*
+								leave_hour_* leave_minute_* mem_base_* nextplace_*
+								memsl_* *consent* call_num memberbaseline memfilter 
+								no_answer_* num_call upazila union stop_at sex*
+								replaced_reason* age_month_* age_? age_?? district
+								reschedule* formdef_version extra_hours age_l_*
 							" ;	
 							#d cr	
 

@@ -7,14 +7,14 @@
 ║                                                                               ║
 ║-------------------------------------------------------------------------------║
 ║    TITLE:          02_import.do                                               ║
-║    PROJECT:        Test Project                                               ║
+║    PROJECT:        TRK_followup_survey_2023                                   ║
 ║    PURPOSE:        Prepare data                                               ║
 ║-------------------------------------------------------------------------------║
-║    AUTHOR:         [YOUR NAME], ARCED Foundation                              ║
-║    CONTACT:        [YOUR.EMAIL]@arced.foundation                              ║
+║    AUTHOR:                                                                    ║
+║    CONTACT:                                                                   ║
 ║-------------------------------------------------------------------------------║
-║    CREATED:        03 December 2022                                           ║
-║    MODIFIED:       28 April 2023                                              ║
+║    CREATED:                                                                   ║
+║    MODIFIED:                                                                  ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
                                                                                                                                                                                                        */
@@ -22,8 +22,8 @@
 qui {																																																	   
 **# Encryption
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-	n di as result "Data import initiated..."
-	n arced_mount_file using "${container}", drive(X:)
+	n di as text "Data import initiated..."
+	if ${encrypt} n arced_mount_file using "${container}", drive(X:)
 	
 
 
@@ -43,7 +43,7 @@ qui {
 						"Close the SurveyCTO Desktop application after downloading data to resume DataFlow."
 		
 		else n di as result "Close the SurveyCTO Desktop application after downloading data to resume DataFlow." _n
-		
+		n di as text "Data download initiated..."
 		! "${sctodesktoploc}"		
 		
 		n di as result "Data download done." _n
@@ -54,6 +54,7 @@ qui {
 	qui if ${sctodownload} {		
 		n di as input "SurveyCTO username:" _r(suser)
 		n di as input "SurveyCTO password:" _r(spass)
+		n di as text "Data download initiated..."
 		sctoapi ${formid}, server(arced) username("${suser}") password("${spass}") ///
 				date(1546344000) output("${sctodataloc}") media("${media}") 
 		
@@ -64,85 +65,94 @@ qui {
 	
 **# Data labeling
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-	qui {
-		insheet using "${rawdata}", clear names
+	 {		
+		n di as text "Data labeling initiated..."
+		if !${odksplit} do ${sctoimportdo}
 		
-		tempfile 	rawdata
-		save		`rawdata'
+		if ${odksplit} {
+			insheet using "${rawdata}", clear names
 		
-		* Label dataset using XLSForm
-		qui odksplit, 	data(`rawdata') survey("${xlsform}") ///
-						single multiple varlabel ///
-						label(English) clear
-		
-		* Fix date variables 
-			** Find date and datetime variables from the form
-			preserve 
-				import excel using "${xlsform}", sheet(survey) clear firstrow
-				
-				cap confirm var name 
-				
-				if _rc {
-					loc name = "value"
+			tempfile 	rawdata
+			save		`rawdata'
+			
+			* Label dataset using XLSForm
+			qui odksplit, 	data(`rawdata') survey("${xlsform}") ///
+							single multiple varlabel ///
+							clear // label(English)
+			
+			* Fix date variables 
+				** Find date and datetime variables from the form
+				preserve 
+					import excel using "${xlsform}", sheet(survey) clear firstrow
+					
+					cap confirm var name 
+					
+					if _rc {
+						loc name = "value"
+					}
+					
+					else {
+						loc name = "name"
+					}
+					
+					replace type = trim(type)
+					levelsof `name' if inlist(type, "date"), loc(dates) clean
+					levelsof `name' if inlist(type, "datetime", "start", "end"), loc(datetimes) clean
+				restore
+			
+				** Change the formats of date and datetime variables
+				if !mi("`dates'") {
+					foreach date of loc dates {
+						
+						cap confirm var `date'
+						
+						if !_rc {
+							count if mi(`date')
+							if `=r(N)'<`=_N' {
+								tempvar 	`date'_t
+								gen double 	``date'_t' = date(`date', "MDY"), after(`date')
+								drop 		`date'
+								gen 		`date' = ``date'_t', after(``date'_t')
+								format 		`date' %td
+								drop  		``date'_t'
+							}
+						}			
+					}
 				}
-				
-				else {
-					loc name = "name"
-				}
-				
-				replace type = trim(type)
-				glevelsof `name' if inlist(type, "date"), loc(dates) clean
-				glevelsof `name' if inlist(type, "datetime", "start", "end"), loc(datetimes) clean
-			restore
-		
-			** Change the formats of date and datetime variables
-			if !mi(`dates') {
-				foreach date of loc dates {
-					cap confirm var `date'
+			
+				loc datetimes =  `"`datetimes' submissiondate"'
+
+				foreach datetime of loc datetimes {
+					cap confirm var `datetime'
 					
 					if !_rc {
-						tempvar 	`date'_t
-						gen double 	``date'_t' = date(`date', "MDY"), after(`date')
-						drop 		`date'
-						gen 		`date' = ``date'_t', after(``date'_t')
-						format 		`date' %td
-						drop  		``date'_t'
-					}			
+						tempvar 	`datetime'_t
+						gen double 	``datetime'_t' = Clock(`datetime', "MDYhms"), after(`datetime')
+						drop 		`datetime'
+						gen 		`datetime' = ``datetime'_t', after(``datetime'_t')
+						format 		`datetime' %tC	
+						drop  		``datetime'_t'
+					}
 				}
-			}
-		
-			loc datetimes =  `"`datetimes' submissiondate"'
+			
+			
+			* Fix media variables
 
-			foreach datetime of loc datetimes {
-				cap confirm var `datetime'
+				if !mi("${media}") {
+					foreach var of global media {
+						local delim = strpos(`var', " ")
+						replace `var' = word(`var', `=wordcount(`var')')
+					}
+				}
 				
-				if !_rc {
-					tempvar 	`datetime'_t
-					gen double 	``datetime'_t' = Clock(`datetime', "MDYhms"), after(`datetime')
-					drop 		`datetime'
-					gen 		`datetime' = ``datetime'_t', after(``datetime'_t')
-					format 		`datetime' %tC	
-					drop  		``datetime'_t'
-				}
-			}
+			
+			* Save dta file
+			compress
+			label data "Updated by `=c(username)' on `=c(current_date)' `=c(current_time)'. NOTE: This dataset contains PII."
+			save `"`=regexr("${rawdata}", ".csv", ".dta")'"', replace 
+		}
 		
 		
-		* Fix media variables
-
-			if !mi("${media}") {
-				foreach var of global media {
-					local delim = strpos(`var', " ")
-					replace `var' = word(`var', `=wordcount(`var')')
-				}
-			}
-			
-			
-			
-		
-		* Save dta file
-		compress
-		label data "Updated by `=c(username)' on `=c(current_date)' `=c(current_time)'. NOTE: This dataset contains PII."
-		save `"`=regexr("${rawdata}", ".csv", ".dta")'"', replace 	
 		
 		n di as result "Data labelling done." _n
 	}
@@ -154,7 +164,7 @@ qui {
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
 	qui if ${pii_correction} {
-		
+		n di as text "PII cleaning initiated..."
 		tempfile c_maindata 
 		save 	`c_maindata'
 		
@@ -163,7 +173,7 @@ qui {
 		tostring _all, replace
 
 		if _N>0  {
-			glevelsof variable, clean loc(variables)
+			levelsof variable, clean loc(variables)
 			foreach var of loc variables {
 				loc `var'_cmd_num = "replace `var'=" + correction + `" if key==""' + key + `"""'
 				loc `var'_cmd_str = "replace `var'=" + `"""'+ correction + `"""' + `" if key==""' + key + `"""'
@@ -195,7 +205,9 @@ qui {
 **# PII splitting
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
-	qui if !mi(`PIIs') {
+	qui if !mi(trim("${PIIs}")) {
+		n di as text "PII splitting initiated..."
+		
 		* Save the PII varibles separately
 		preserve
 			keep 	${PIIs} ${uid}
@@ -207,7 +219,7 @@ qui {
 		preserve
 			drop 	${PIIs}
 			
-			ds *name* *phone* *gps*
+			ds *name* *phone* 
 			loc varnamelist = "`r(varlist)'"
 			
 			ds, has(varl *name* *phone*)
@@ -232,12 +244,136 @@ qui {
 		n di as result "PII Splitting done." _n
 	}
 	
+**# Prepare Text Audit data
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
+	if !mi("${text_audit}") qui {
+		n di as text "Text audit data preparation initiated..."
+		
+		clear 
+		tempfile textauditdata 
+		save 	`textauditdata', emptyok replace 
+		
+		u "${rawdatadta}" if ${consent}==1 & !mi(${text_audit}), clear
+		
+		cap confirm file "${textauditdata}"
+		if !_rc merge m:m ${uid} using "${textauditdata}", keep(1) nogen
+		
+		if `=_N' > 0 {
+					
+			if regexm(${text_audit}, "^https") {
+			    * Browser or API 
+			    replace ${text_audit} = substr(${text_audit}, strpos(${text_audit}, "uuid:") + 5, ///
+										strpos(${text_audit}, "&e=") - strpos(${text_audit}, "uuid:") - 5)
+				replace ${text_audit} = "TA_" + ${text_audit}
+			}
+			
+			else if regexm(${text_audit}, "^media") {
+			    * Surveycto desktop
+			    replace ${text_audit} = substr(${text_audit}, strpos(${text_audit}, "media\") + 6, ///
+										strpos(${text_audit}, ".csv") - strpos(${text_audit}, "media\") - 6)
+			}
+			
+			* Append all the files
+			levelsof ${text_audit}, clean loc(alltexts)
+			
+			loc i = 1
+			loc x = 0
+			n _dots 0, title(Appending text audit files) reps(`=wordcount("`alltexts'")')
+			foreach text of loc alltexts {
+				cap confirm file "${mediafolder}/`text'.csv"
+				if _rc loc ++x
+				
+				if !_rc {
+					insheet using "${mediafolder}/`text'.csv", names clear
+					
+					* Generate uid
+					g ${uid} = `"uuid:`=subinstr("`text'", "TA_", "",.)'"'
+					
+					append using `textauditdata'
+					save `textauditdata', replace
+					n _dots `i' 0 
+					loc ++i
+				}
+			}
+			if `x'>0 n di as err _n "`x' text audit files do not exist" _n
+			
+			compress
+			n di "" _n
+			n di as result "Found `=`i'-1' new text audit files." _n
+			cap append using "${textauditdata}"
+			save "${textauditdata}", replace
+		}
+	}
+		
+**# Prepare Comment data
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+		
+	if !mi("${sctocomments}") qui {
+		n di as text "Comments data preparation initiated..."
+		
+		clear 
+		tempfile commentdata 
+		save 	`commentdata', emptyok replace 
+		
+		u "${rawdatadta}" if ${consent}==1 & !mi(${sctocomments}), clear
+		
+		cap confirm file "${commentsdata}"
+		if !_rc merge m:m ${uid} using "${commentsdata}", keep(1) nogen
+		
+		if `=_N' > 0 {
+					
+			if regexm(${sctocomments}, "^https") {
+			    * Browser or API 
+			    replace ${sctocomments} = substr(${sctocomments}, strpos(${sctocomments}, "uuid:") + 5, ///
+										strpos(${sctocomments}, "&e=") - strpos(${sctocomments}, "uuid:") - 5)
+				replace ${sctocomments} = "TA_" + ${sctocomments}
+			}
+			
+			else if regexm(${sctocomments}, "^media") {
+			    * Surveycto desktop
+			    replace ${sctocomments} = substr(${sctocomments}, strpos(${sctocomments}, "media\") + 6, ///
+										strpos(${sctocomments}, ".csv") - strpos(${sctocomments}, "media\") - 6)
+			}
+			
+			* Append all the files
+			levelsof ${sctocomments}, clean loc(allcomments)
+			
+			loc i = 1
+			loc x = 1
+			n _dots 0, title(Appending comments files)  reps(`=wordcount("`allcomments'")')
+			foreach text of loc allcomments {
+				cap confirm file "${mediafolder}/`text'.csv"
+				if _rc loc ++x
+				
+				if !_rc {
+					insheet using "${mediafolder}/`text'.csv", names clear
+					tostring _all, replace
+					* Generate uid
+					g ${uid} = `"uuid:`=subinstr("`text'", "Comments-", "",.)'"'
+					
+					append using `commentdata'
+					save `commentdata', replace
+					n _dots `i' 0
+					loc ++i
+				}				
+			}
+			
+			if `x'>0 n di as err _n "`x' comment files do not exist" _n
+			
+								
+			compress
+			n di "" _n 
+			n di as result "Found `=`i'-1' new Comment files." _n
+			cap append using "${commentsdata}"
+			save "${commentsdata}", replace
+		}
+	}
 	
 **# Dismount
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
-	veracrypt, dismount drive(X:) 
+	if ${encrypt} veracrypt, dismount drive(X:) 
 	
 	
 
