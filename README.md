@@ -12,8 +12,8 @@
 
 ## :gear: Installation
 ```stata
-		net install arceddataflow, all replace ///
-			from("https://raw.githubusercontent.com/ARCED-Foundation/arceddataflow/master")
+net install arceddataflow, all replace ///
+	from("https://raw.githubusercontent.com/ARCED-Foundation/arceddataflow/master")
 ```
 
 ## :wrench: Syntax
