@@ -26,7 +26,7 @@ net install arceddataflow, all replace ///
 
 ## :paperclip: Example Syntax
 ```stata
-arceddataflow, do(C:\Users\Mehrab Ali\Desktop\Music)
+arceddataflow, do("C:\Users\Mehrab Ali\Projects\New Project")
 ```
 
 ## :mage: Author
