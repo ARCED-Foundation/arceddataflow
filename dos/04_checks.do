@@ -514,7 +514,7 @@ include 01_setup.do
 			
 			
 			keep `var' `var'_name ${enumid} ${enumname} ${uid} ${sid} min max sd mean ${outkeepvars}
-			gen  variable 	= "`var'_name"
+			gen  variable 	= `var'_name
 			g varlabel 		= "`: var lab `var''"
 			// ren  `var'		value
 			
