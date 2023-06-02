@@ -116,8 +116,8 @@ qui {
 			
 			forval var =1/`corrcount' {	
 				loc _`var'_name 	= "`=variable[`var']'"
-				loc `var'_cmd_num 	= "replace `=variable[`var']'=" + string(`=correction[`var']') + `" if key==""' + key[`var'] + `"""'
-				loc `var'_cmd_str 	= "replace `=variable[`var']'=" + `"""'+ string(`=correction[`var']') + `"""' + `" if key==""' + key[`var'] + `"""'
+				loc `var'_cmd_num 	= "qui replace `=variable[`var']'=" + string(`=correction[`var']') + `" if key==""' + key[`var'] + `"""'
+				loc `var'_cmd_str 	= "qui replace `=variable[`var']'=" + `"""'+ string(`=correction[`var']') + `"""' + `" if key==""' + key[`var'] + `"""'
 				loc _`var'_value 	= "`=correction[`var']'"
 				loc _`var'_key 		= "`=key[`var']'"
 			}
@@ -176,6 +176,7 @@ qui {
 			restore 
 			
 			n di as result "`i' correction(s) made successfully" _n
+			sleep 5000
 		}
 		
 		if _N==0  u 	`c_maindata', clear	
