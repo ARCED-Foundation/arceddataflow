@@ -17,7 +17,7 @@ net install arceddataflow, all replace ///
 ```
 
 ## :wrench: Syntax
-``arceddataflow, dofiles(string)``
+``arceddataflow, dofiles(string) correction(string)``
 
 
 ## :screwdriver: Options
@@ -26,7 +26,7 @@ net install arceddataflow, all replace ///
 
 ## :paperclip: Example Syntax
 ```stata
-arceddataflow, do("C:\Users\Mehrab Ali\Projects\New Project")
+arceddataflow, do("C:\Users\Mehrab Ali\Projects\New Project") correction(C:\Users\Mehrab Ali\Projects\New Project\Data\Corrections)
 ```
 
 ## :mage: Author

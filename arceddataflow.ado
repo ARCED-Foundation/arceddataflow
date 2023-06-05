@@ -1,4 +1,4 @@
-*! version 1.0.0 Mehrab Ali 31may2023
+*! version 1.0.1 Mehrab Ali 31may2023
 
 cap prog drop arceddataflow
 program  arceddataflow
@@ -8,7 +8,7 @@ program  arceddataflow
 	**# Define syntax                                                            
 	*-------------------------------------------------------------------------------
 		
-		syntax, DOfiles(string) 
+		syntax, DOfiles(string) CORRection(string)
 	
 	* Copy do files
 		
@@ -26,6 +26,9 @@ program  arceddataflow
 			 
 		copy "https://github.com/ARCED-Foundation/arceddataflow/raw/master/dos/04_checks.do" ///
 			 "`dofiles'/04_checks.do"
+			
+		copy "https://github.com/ARCED-Foundation/arceddataflow/raw/master/assets/Correction_sheet.xlsx" ///
+			 "`correction'/Correction_sheet.xlsx"
 
 			 
 end

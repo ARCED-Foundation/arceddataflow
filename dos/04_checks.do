@@ -572,28 +572,32 @@ include 01_setup.do
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*	
 
 	if !mi("${sctocomments}")  {
-		n di as input _n "Running Check 9: Prepare and export comments data"
+	    cap confirm file "${commentsdata}"
+		if !_rc {
+		    n di as input _n "Running Check 9: Prepare and export comments data"
 
-		* Export stats
-		
-		n u "${commentsdata}" if !inlist(comment, ".") & !mi(comment), clear
-		
-		* Variable stats
-		g variable = reverse(substr(reverse(fieldname), 1, strpos(reverse(fieldname), "/") - 1))
-		replace variable = fieldname if !regex(fieldname, "/")
-		
-		merge m:m ${uid} using "${cleandata}", nogen keep(3) keepusing(${enumid} ${enumname} ${startdate} ${sid})
-		
-						
-			export 	excel 	${sid} ${uid} ${enumid} ///
-							${enumname}  			///
-							${startdate} variable comment	///
-							using "${outfile_hfc}", ///
-							sheetmodify 			///
-							sh("C9. SCTOcomments")	///
-							cell(A5) keepcellfmt	
-		n di as result  "Check 9 completed"
+			* Export stats
+			
+			n u "${commentsdata}" if !inlist(comment, ".") & !mi(comment), clear
+			
+			* Variable stats
+			g variable = reverse(substr(reverse(fieldname), 1, strpos(reverse(fieldname), "/") - 1))
+			replace variable = fieldname if !regex(fieldname, "/")
+			
+			merge m:m ${uid} using "${cleandata}", nogen keep(3) keepusing(${enumid} ${enumname} ${startdate} ${sid})
+			
+							
+				export 	excel 	${sid} ${uid} ${enumid} ///
+								${enumname}  			///
+								${startdate} variable comment	///
+								using "${outfile_hfc}", ///
+								sheetmodify 			///
+								sh("C9. SCTOcomments")	///
+								cell(A5) keepcellfmt	
+			n di as result  "Check 9 completed"
+		}
 	}
+		
 	
 **# Check 10: Prepare and check text audit data
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*	
