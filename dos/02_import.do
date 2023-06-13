@@ -77,63 +77,7 @@ qui {
 			
 			* Label dataset using XLSForm
 			qui odksplit, 	data(`rawdata') survey("${xlsform}") ///
-							single multiple varlabel ///
-							clear // label(English)
-			
-			* Fix date variables 
-				** Find date and datetime variables from the form
-				preserve 
-					import excel using "${xlsform}", sheet(survey) clear firstrow
-					
-					cap confirm var name 
-					
-					if _rc {
-						loc name = "value"
-					}
-					
-					else {
-						loc name = "name"
-					}
-					
-					replace type = trim(type)
-					levelsof `name' if inlist(type, "date"), loc(dates) clean
-					levelsof `name' if inlist(type, "datetime", "start", "end"), loc(datetimes) clean
-				restore
-			
-				** Change the formats of date and datetime variables
-				if !mi("`dates'") {
-					foreach date of loc dates {
-						
-						cap confirm var `date'
-						
-						if !_rc {
-							count if mi(`date')
-							if `=r(N)'<`=_N' {
-								tempvar 	`date'_t
-								gen double 	``date'_t' = date(`date', "MDY"), after(`date')
-								drop 		`date'
-								gen 		`date' = ``date'_t', after(``date'_t')
-								format 		`date' %td
-								drop  		``date'_t'
-							}
-						}			
-					}
-				}
-			
-				loc datetimes =  `"`datetimes' submissiondate"'
-
-				foreach datetime of loc datetimes {
-					cap confirm var `datetime'
-					
-					if !_rc {
-						tempvar 	`datetime'_t
-						gen double 	``datetime'_t' = Clock(`datetime', "MDYhms"), after(`datetime')
-						drop 		`datetime'
-						gen 		`datetime' = ``datetime'_t', after(``datetime'_t')
-						format 		`datetime' %tC	
-						drop  		``datetime'_t'
-					}
-				}
+							clear dateformat(MDY) // label(English)
 			
 			
 			* Fix media variables
