@@ -546,12 +546,62 @@ include 01_setup.do
 	n di as result  "Check 7 completed"
 	use "${cleandata}", clear
     
+
+**# Check 8: Missing report
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+	n di as input _n "Running Check 8: Missing report"
+	foreach var of varlist * {
+		qui levelsof ${enumid}, loc(enums) 
+		foreach enumno of loc enums {
+			count if mi(`var') & ${enumid} == "`enumno'"
+			loc misscount = `r(N)'
+			qui count 
+			if `misscount' > 0 {
+				levelsof 	${enumname} if ${enumid} == "`enumno'", loc(enum_name)
+				loc enumname 	= "`enumname' 		`enum_name'"
+				loc obs 		= "`obs' 			`r(N)' "
+				loc enum 		= "`enum' 			`enumno'"
+				loc varname 	= "`varname' 		`var'"
+				loc values 		= "`values' 		`misscount'"
+			}
+		}	
+	}
+
+
+	preserve 
+		clear
+		set obs `=wordcount("`varname'")'
+		g enum = ""
+		g varname = ""
+		g value = .
+
+		g obs = .
+
+
+		forval i=1/`=wordcount("`varname'")' {
+			replace enum 	= "`: word `i' of `enum''" 	in `i'
+			replace varname = "`: word `i' of `varname''" 	in `i'
+			replace value 	= `: word `i' of `values''		in `i'
+			replace obs 	= `: word `i' of `obs'' 		in `i'
+		}
+
+		g miss_per = value*100 / obs 
+
+		gsort enum -miss_per
+		
+		export 	excel using "${outfile_hfc}", 	///
+							sheetmodify 		///
+							sh("C8. Missing")	///
+							cell(A5) 			///
+							keepcellfmt
+	restore	
+	n di as result  "Check 8 completed"
 	
-**# Check 8: All comments
+**# Check 9: All comments
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
 	if !mi("${enumcomments}") {	
-		n di as input _n "Running Check 8: All comments"
+		n di as input _n "Running Check 9: All comments"
 		gsort ${startdate}
 		export 	excel ${sid} ${uid} ${enumid} 						///
 				${enumname} ${startdate} ${enumcomments} 				///
@@ -560,21 +610,21 @@ include 01_setup.do
 				& !mi(${enumcomments}) 								///
 				using "${outfile_hfc}", 							///
 				sheetmodify 										///
-				sh("C8. Comments")									///
+				sh("C9. Comments")									///
 				cell(A5) 		keepcellfmt
     
-	n di as result  "Check 8 completed"
+	n di as result  "Check 9 completed"
 	}
 
 
     
-**# Check 9: Prepare and export comments data
+**# Check 10: Prepare and export comments data
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*	
 
 	if !mi("${sctocomments}")  {
 	    cap confirm file "${commentsdata}"
 		if !_rc {
-		    n di as input _n "Running Check 9: Prepare and export comments data"
+		    n di as input _n "Running Check 10: Prepare and export comments data"
 
 			* Export stats
 			
@@ -592,18 +642,18 @@ include 01_setup.do
 								${startdate} variable comment	///
 								using "${outfile_hfc}", ///
 								sheetmodify 			///
-								sh("C9. SCTOcomments")	///
+								sh("C10. SCTOcomments")	///
 								cell(A5) keepcellfmt	
-			n di as result  "Check 9 completed"
+			n di as result  "Check 10 completed"
 		}
 	}
 		
 	
-**# Check 10: Prepare and check text audit data
+**# Check 11: Prepare and check text audit data
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*	
 
 	if !mi("${text_audit}")  {
-		n di as input _n "Running Check 10: Prepare and check text audit data"
+		n di as input _n "Running Check 11: Prepare and check text audit data"
 		
 		* Export stats
 		clear
@@ -626,7 +676,7 @@ include 01_setup.do
 						
 			export 	excel 	using "${outfile_hfc}", ///
 							sheetmodify 			///
-							sh("C10. TimeSpent")		///
+							sh("C11. TimeSpent")		///
 							cell(H5) keepcellfmt
 		
 		restore 
@@ -667,18 +717,18 @@ include 01_setup.do
 						
 			export 	excel 	using "${outfile_hfc}", ///
 							sheetmodify 			///
-							sh("C10. TimeSpent")		///
+							sh("C11. TimeSpent")		///
 							cell(A5) keepcellfmt
 				
 		}
-		n di as result  "Check 10 completed"
+		n di as result  "Check 11 completed"
 	}
 	
 	
-**# Check 11: Time use
+**# Check 12: Time use
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*	
 
-	n di as input _n "Running Check 11: Time use"
+	n di as input _n "Running Check 12: Time use"
 	
 	* Daily time use
 	n u "${cleandata}", clear
@@ -709,7 +759,7 @@ include 01_setup.do
 	
 		export 	excel 	using "${outfile_hfc}", ///
 						sheetmodify 			///
-						sh("C11a. DailyTimeUse")	///
+						sh("C12a. DailyTimeUse")	///
 						cell(A5) keepcellfmt	
 						
 	
@@ -742,10 +792,10 @@ include 01_setup.do
 	
 		export 	excel 	using "${outfile_hfc}", ///
 						sheetmodify 			///
-						sh("C11b. EnumTimeUse")	///
+						sh("C12b. EnumTimeUse")	///
 						cell(A5) keepcellfmt	
 						
-	n di as result  "Check 11 completed"	
+	n di as result  "Check 12 completed"	
 	
 	
 	macro drop enumname			
