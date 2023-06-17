@@ -1,2 +1,16 @@
+v 1.0.1
+d 'arcceddataflow': is a Stata command that creates the do files for the data flow for a project.
+d
+d
+d KW: data management
+d KW: data collection
+d
+d Requires: Stata version 9
+d
+d Distribution-Date: 17jun2023
+d
+d Author: Mehrab Ali, ARCED Foundation
+d Support: mehrabbabu@gmail.com
+d
 f arceddataflow.ado
 f arceddataflow.sthlp

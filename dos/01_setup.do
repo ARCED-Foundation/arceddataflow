@@ -62,12 +62,10 @@ qui {
 	cap which 	odksplit
 	if _rc 		net install odksplit, all replace ///
 				from("https://raw.githubusercontent.com/ARCED-Foundation/odksplit/master")
-	
-	** Install gtools 
-	cap which 	gtools
-	if _rc 		ssc install gtools, all replace 
+	adoupdate odksplit, update
 
-	** Install gtools 
+
+	** Install arced_mount_file 
 	cap which 	arced_mount_file
 	if _rc 		net install arced_mount_file, all replace ///
 				from("https://raw.githubusercontent.com/ARCED-Foundation/arceddataflow/master/ados")
