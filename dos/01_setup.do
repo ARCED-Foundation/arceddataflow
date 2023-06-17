@@ -239,7 +239,8 @@ qui {
 							" ;	
 							#d cr	
 
-	
+	* Missing max % 
+	gl	missper				"70"
 	
 	
 n di as result _col(15) "---------------------"

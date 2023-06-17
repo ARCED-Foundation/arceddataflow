@@ -38,7 +38,7 @@ include 01_setup.do
 	
 	u "${cleandata}", clear
 	
-	tostring ${enumid}, replace 
+	tostring ${enumid}, replace force
 	
 	if mi("${enumname}") {
 		cap g 	enumname = ${enumid}
@@ -544,23 +544,25 @@ include 01_setup.do
 	}
 
 	n di as result  "Check 7 completed"
+	
 	use "${cleandata}", clear
-    
+    tostring ${enumid}, replace force
 
 **# Check 8: Missing report
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	n di as input _n "Running Check 8: Missing report"
+	
 	foreach var of varlist * {
 		qui levelsof ${enumid}, loc(enums) 
 		foreach enumno of loc enums {
 			count if mi(`var') & ${enumid} == "`enumno'"
 			loc misscount = `r(N)'
-			qui count 
-			if `misscount' > 0 {
+			count if ${enumid} == "`enumno'"
+			if `misscount'*100/`r(N)' >= ${missper} {
 				levelsof 	${enumname} if ${enumid} == "`enumno'", loc(enum_name)
-				loc enumname 	= "`enumname' 		`enum_name'"
+				loc enumname 	= `"`enumname' 		`enum_name'"'
 				loc obs 		= "`obs' 			`r(N)' "
-				loc enum 		= "`enum' 			`enumno'"
+				loc enum 		= `"`enum' 			`enumno'"'
 				loc varname 	= "`varname' 		`var'"
 				loc values 		= "`values' 		`misscount'"
 			}
@@ -571,22 +573,22 @@ include 01_setup.do
 	preserve 
 		clear
 		set obs `=wordcount("`varname'")'
-		g enum = ""
-		g varname = ""
-		g value = .
-
+		g enum 		= ""
+		g enumname 	= ""
+		g varname 	= ""
+		g value 	= .
 		g obs = .
 
-
 		forval i=1/`=wordcount("`varname'")' {
-			replace enum 	= "`: word `i' of `enum''" 	in `i'
-			replace varname = "`: word `i' of `varname''" 	in `i'
-			replace value 	= `: word `i' of `values''		in `i'
-			replace obs 	= `: word `i' of `obs'' 		in `i'
+			replace enum 	= `"`: word `i' of `enum''"' 		in `i'
+			replace enumname= `"`: word `i' of `enumname''"'	in `i'
+			replace varname = "`: word `i' of `varname''" 		in `i'
+			replace obs 	= `: word `i' of `obs'' 			in `i'
+			replace value 	= `: word `i' of `values''			in `i'			
 		}
 
 		g miss_per = value*100 / obs 
-
+		keep if miss_per >= ${missper}
 		gsort enum -miss_per
 		
 		export 	excel using "${outfile_hfc}", 	///
