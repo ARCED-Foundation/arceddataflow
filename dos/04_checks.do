@@ -589,7 +589,7 @@ include 01_setup.do
 
 		g miss_per = value*100 / obs 
 		keep if miss_per >= ${missper}
-		gsort enum -miss_per
+		gsort enum varname
 		
 		export 	excel using "${outfile_hfc}", 	///
 							sheetmodify 		///
