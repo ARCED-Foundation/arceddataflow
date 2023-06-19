@@ -545,8 +545,14 @@ include 01_setup.do
 
 	n di as result  "Check 7 completed"
 	
-	use "${cleandata}", clear
-    tostring ${enumid}, replace force
+	u "${cleandata}", clear
+	
+	tostring ${enumid}, replace force
+	
+	if mi("${enumname}") {
+		cap g 	enumname = ${enumid}
+		gl 	enumname = "enumname"
+	}
 
 **# Check 8: Missing report
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
@@ -733,7 +739,15 @@ include 01_setup.do
 	n di as input _n "Running Check 12: Time use"
 	
 	* Daily time use
-	n u "${cleandata}", clear
+	u "${cleandata}", clear
+	
+	tostring ${enumid}, replace force
+	
+	if mi("${enumname}") {
+		cap g 	enumname = ${enumid}
+		gl 	enumname = "enumname"
+	}
+	
 	format ${starttime} %tc
 	
 	gen  __hour = hh(${starttime})
@@ -766,7 +780,15 @@ include 01_setup.do
 						
 	
 	* Enum time use
-	n u "${cleandata}", clear
+	u "${cleandata}", clear
+	
+	tostring ${enumid}, replace force
+	
+	if mi("${enumname}") {
+		cap g 	enumname = ${enumid}
+		gl 	enumname = "enumname"
+	}
+	
 	format ${starttime} %tc
 	
 	gen  __hour = hh(${starttime})

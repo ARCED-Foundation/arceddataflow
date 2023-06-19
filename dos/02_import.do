@@ -80,15 +80,7 @@ qui {
 							clear dateformat(MDY) // label(English)
 			
 			
-			* Fix media variables
-
-				if !mi("${media}") {
-					foreach var of global media {
-						local delim = strpos(`var', " ")
-						replace `var' = word(`var', `=wordcount(`var')')
-					}
-				}
-				
+			
 			
 			* Save dta file
 			compress
