@@ -97,7 +97,8 @@ qui {
 	*---------------------------
 	gl 	data_correction			1
 	gl 	pii_correction			0
-	gl	odksplit 				0
+	gl	odksplit 				1
+		gl  language		"English"
 		gl 	sctoimportdo 	"02b_datalabel.do"
 
 	

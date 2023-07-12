@@ -70,6 +70,8 @@ qui {
 		if !${odksplit} do ${sctoimportdo}
 		
 		if ${odksplit} {
+			
+			if !mi("${language}") loc label = "label(${language})"
 			insheet using "${rawdata}", clear names
 		
 			tempfile 	rawdata
@@ -77,7 +79,7 @@ qui {
 			
 			* Label dataset using XLSForm
 			qui odksplit, 	data(`rawdata') survey("${xlsform}") ///
-							clear dateformat(MDY) // label(English)
+							clear dateformat(MDY) `label'
 			
 			
 			

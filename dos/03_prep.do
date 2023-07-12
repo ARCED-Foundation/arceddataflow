@@ -26,7 +26,8 @@ qui {
 	if !_rc n u "${deidentified}", clear
 	if  _rc n u "${rawdatadta}", clear
 	
-
+	n di as input "Data preparation initiated.."
+	
 **# generate date variabls
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
@@ -240,6 +241,8 @@ qui {
 			}		
 		}	
 	}
+	
+
 	
 
 **# Drop observations with date before survey start date
