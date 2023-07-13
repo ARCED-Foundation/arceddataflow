@@ -7,14 +7,14 @@
 ║                                                                               ║
 ║-------------------------------------------------------------------------------║
 ║    TITLE:          01_setup.do                                                ║
-║    PROJECT:        SCS_Mask_BD_2022                                           ║
+║    PROJECT:        					                                        ║
 ║    PURPOSE:        All setup for the Data Flow                                ║
 ║-------------------------------------------------------------------------------║
-║    AUTHOR:         Md. Zahirul Islam, ARCED Foundation                        ║
-║    CONTACT:        zahirul.islam@arced.foundation                             ║
+║    AUTHOR:         									                        ║
+║    CONTACT:        								                            ║
 ║-------------------------------------------------------------------------------║
-║    CREATED:        12 May 2023                                                ║
-║    MODIFIED:       23 May 2023                                                ║
+║    CREATED:        			                                                ║
+║    MODIFIED:       			                                                ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
                                                                                                                                                                                                        */
 
