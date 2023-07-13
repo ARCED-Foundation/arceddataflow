@@ -8,7 +8,7 @@ program  arceddataflow
 	**# Define syntax                                                            
 	*-------------------------------------------------------------------------------
 		
-		syntax, DOfiles(string) CORRection(string) [AUTHor(string) email(string) PROJect(string)]
+		syntax, DOfiles(string) CORRection(string) [author(string) email(string) project(string)]
 	
 	* Copy do files
 		
@@ -175,3 +175,5 @@ program  arceddataflow
 	file close setup
 			 
 end
+
+
