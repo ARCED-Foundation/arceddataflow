@@ -26,7 +26,11 @@ net install arceddataflow, all replace ///
 
 ## :paperclip: Example Syntax
 ```stata
-arceddataflow, do("C:\Users\Mehrab Ali\Projects\New Project") correction(C:\Users\Mehrab Ali\Projects\New Project\Data\Corrections)
+arceddataflow, 	do("C:\Users\Mehrab Ali\Projects\New Project") ///
+		correction(C:\Users\Mehrab Ali\Projects\New Project\Data\Corrections) ///
+		author("Mehrab Ali, ARCED Foundation") ///
+		email("mehrab.ali@arced.foundation") ///
+		project("Project ABC")
 ```
 
 ## :mage: Author
