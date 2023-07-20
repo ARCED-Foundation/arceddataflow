@@ -299,11 +299,13 @@ qui {
 			if `x'>0 n di as err _n "`x' comment files do not exist" _n
 			
 								
-			compress
-			n di "" _n 
-			n di as result "Found `=`i'-1' new Comment files." _n
-			cap append using "${commentsdata}"
-			save "${commentsdata}", replace
+			if  `=_N'>0 {
+				compress
+				n di "" _n 
+				n di as result "Found `=`i'-1' new Comment files." _n
+				cap append using "${commentsdata}"
+				save "${commentsdata}", replace
+			}	
 		}
 	}
 	
