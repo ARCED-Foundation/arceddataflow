@@ -19,7 +19,7 @@
 
                                                                                                                                                                                                        */
 
-qui {																																																	   
+qui {																			   
 **# Encryption
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	n di as text "Data import initiated..."
@@ -54,12 +54,12 @@ qui {
 	qui if ${sctodownload} {		
 		n di as input "SurveyCTO username:" _r(suser)
 		n di as input "SurveyCTO password:" _r(spass)
-		cls
 		n di as text "Data download initiated..."
+		cls
 		sctoapi ${formid}, server(arced) username("${suser}") password("${spass}") ///
 				date(1546344000) output("${sctodataloc}") media("${media}") 
 		
-		copy "${sctodataloc}/${formid}_WIDE.csv" "${rawdata}", replace
+		cap copy "${sctodataloc}/${formid}_WIDE.csv" "${rawdata}", replace
 		n di as result "Data download done." _n
 	}
 	
@@ -202,7 +202,8 @@ qui {
 					
 			if regexm(${text_audit}, "^https") {
 			    * Browser or API 
-			    replace ${text_audit} = "TA_" + "`=subinstr(key, "uuid:", "",.)'" + ".csv"
+				g __key = subinstr(key, "uuid:", "",.)
+				replace ${text_audit} = "TA_" + __key 
 			}
 			
 			else if regexm(${text_audit}, "^media") {
@@ -262,7 +263,8 @@ qui {
 					
 			if regexm(${sctocomments}, "^https") {
 			    * Browser or API 
-			     replace ${text_audit} = "Comments-" + "`=subinstr(key, "uuid:", "",.)'" + ".csv"
+				g __key = subinstr(key, "uuid:", "",.)
+				replace ${sctocomments} = "Comments-" + __key 
 			}
 			
 			else if regexm(${sctocomments}, "^media") {
@@ -319,3 +321,4 @@ n di as result _col(15) "---------------------"
 	
 **# End
 }
+
