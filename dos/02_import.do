@@ -202,9 +202,7 @@ qui {
 					
 			if regexm(${text_audit}, "^https") {
 			    * Browser or API 
-			    replace ${text_audit} = substr(${text_audit}, strpos(${text_audit}, "uuid:") + 5, ///
-										strpos(${text_audit}, "&e=") - strpos(${text_audit}, "uuid:") - 5)
-				replace ${text_audit} = "TA_" + ${text_audit}
+			    replace ${text_audit} = "TA_" + "`=subinstr(key, "uuid:", "",.)'" + ".csv"
 			}
 			
 			else if regexm(${text_audit}, "^media") {
@@ -264,9 +262,7 @@ qui {
 					
 			if regexm(${sctocomments}, "^https") {
 			    * Browser or API 
-			    replace ${sctocomments} = substr(${sctocomments}, strpos(${sctocomments}, "uuid:") + 5, ///
-										strpos(${sctocomments}, "&e=") - strpos(${sctocomments}, "uuid:") - 5)
-				replace ${sctocomments} = "TA_" + ${sctocomments}
+			     replace ${text_audit} = "Comments-" + "`=subinstr(key, "uuid:", "",.)'" + ".csv"
 			}
 			
 			else if regexm(${sctocomments}, "^media") {

@@ -282,9 +282,10 @@ qui {
 
 **# Remove single quotes from labels
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-	
+
 	foreach var of varlist _all {
-		loc newvar = subinstr("`:var lab `var''", "`=char(39)'", "", .)
+		loc newvar = subinstr(`"`:var lab `var''"', `"`=char(34)'"', "", .)
+		loc newvar = subinstr("`newvar'", "`=char(39)'", "", .)
 		lab var `var' "`newvar'"
 	}	
 
