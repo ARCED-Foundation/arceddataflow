@@ -828,6 +828,7 @@ include 01_setup.do
 	n di   `"Correction logs are saved here: {browse "${correction_log}":${correction_log}}"'
 	!"${outfile_hfc_fixed}"
 	
+	u "${cleandata}", clear
 }	
 ** END OF DATA FLOW **	
 	

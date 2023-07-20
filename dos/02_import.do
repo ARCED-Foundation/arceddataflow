@@ -54,6 +54,7 @@ qui {
 	qui if ${sctodownload} {		
 		n di as input "SurveyCTO username:" _r(suser)
 		n di as input "SurveyCTO password:" _r(spass)
+		cls
 		n di as text "Data download initiated..."
 		sctoapi ${formid}, server(arced) username("${suser}") password("${spass}") ///
 				date(1546344000) output("${sctodataloc}") media("${media}") 
