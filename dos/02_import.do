@@ -236,11 +236,15 @@ qui {
 			}
 			if `x'>0 n di as err _n "`x' text audit files do not exist" _n
 			
-			compress
-			n di "" _n
-			n di as result "Found `=`i'-1' new text audit files." _n
-			cap append using "${textauditdata}"
-			save "${textauditdata}", replace
+			
+			if  `=_N'>0 {
+				compress
+				n di "" _n
+				n di as result "Found `=`i'-1' new text audit files." _n
+				cap append using "${textauditdata}"
+				save "${textauditdata}", replace
+			}	
+			
 		}
 	}
 		
