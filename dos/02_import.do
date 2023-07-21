@@ -204,6 +204,7 @@ qui {
 			    * Browser or API 
 				g __key = subinstr(key, "uuid:", "",.)
 				replace ${text_audit} = "TA_" + __key 
+				drop __key
 			}
 			
 			else if regexm(${text_audit}, "^media") {
@@ -269,6 +270,7 @@ qui {
 			    * Browser or API 
 				g __key = subinstr(key, "uuid:", "",.)
 				replace ${sctocomments} = "Comments-" + __key 
+				drop __key
 			}
 			
 			else if regexm(${sctocomments}, "^media") {
