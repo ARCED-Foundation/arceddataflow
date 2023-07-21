@@ -38,7 +38,7 @@ program  arceddataflow
 	* 00_master.do 
 	
 	file open setup using "`dofiles'/00_master.do", read write
-	file seek setup 1
+	file seek setup 4
 	file write  setup ///
 		_col(200) "/*" _n ///                                                                                                                                                                                 /*
 		_col(1) "╔═══════════════════════════════════════════════════════════════════════════════╗"  _n 	///
