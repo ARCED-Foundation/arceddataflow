@@ -89,7 +89,7 @@ include 01_setup.do
 	n di as input _n "Running enumerators' performance..."
 	preserve 
 		keep if ${consent} == 1
-		levelsof ${enumid}, clean loc(enumids)
+		levelsof ${enumid},  loc(enumids)
 		
 		ds, has(type numeric)	
 		loc numvars = "`r(varlist)'"
