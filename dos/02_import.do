@@ -85,10 +85,10 @@ qui {
 			
 			* Fix for time shift
 			if !mi("${shifttime}") & ${sctodownload} {
-				qui ds `all', has(format %tc*)
+				ds _all, has(format %tc* %tC*)
 				loc dtvars = r(varlist)
 				foreach var of loc dtvars {
-					replace `var' = `var' + ${shifttime}*60*60*1000 
+					replace `var' = `var' + ${timeshift}*60*60*1000
 				}				
 			}
 			
