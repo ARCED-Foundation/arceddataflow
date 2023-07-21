@@ -81,6 +81,8 @@ qui {
 		*-----------------------------------
 		gl formid			"ssc_bd_23"
 		gl sctodataloc		"X:"
+		gl timeshift 		"6"  		/* 	When data downloaded through API, the time is UTC, 
+											so for Bangladesh the default is UTC+6 to shift to local time */
 		
 	gl 	odkdownload				0		// Download data from ARCED ODK server	
 		* Globals for ARCED ODK server api download

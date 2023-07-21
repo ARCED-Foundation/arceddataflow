@@ -83,7 +83,14 @@ qui {
 							clear dateformat(MDY) `label'
 			
 			
-			
+			* Fix for time shift
+			if !mi("${shifttime}") & ${sctodownload} {
+				qui ds `all', has(format %tc*)
+				loc dtvars = r(varlist)
+				foreach var of loc dtvars {
+					replace `var' = `var' + ${shifttime}*60*60*1000 
+				}				
+			}
 			
 			* Save dta file
 			compress
