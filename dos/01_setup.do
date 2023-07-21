@@ -56,7 +56,7 @@ qui {
 	** Install sctoapi
 	cap which 	sctoapi
 	if _rc 		net install scto, all replace ///
-				from("https://raw.githubusercontent.com/surveycto/scto/master/src")
+				from("https://raw.githubusercontent.com/ARCED-Foundation/stata-scto/master/src")
 	
 	** Install odksplit 
 	cap which 	odksplit
