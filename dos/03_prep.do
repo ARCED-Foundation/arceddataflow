@@ -55,12 +55,13 @@ qui {
 	
 	n di as result _n "Date variables checked"
 		
-**# destring numeric variables
+**# destring numeric variables and tostring enumid
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 
 	destring _all, replace
 
-	
+	tostring ${enumid}, replace
+	replace ${enumid} = subinstr(${enumid}, " ", "", .)
 	
 **# drop unwanted variables
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
