@@ -84,7 +84,7 @@ qui {
 			
 			
 			* Fix for time shift
-			if !mi("${shifttime}") & ${sctodownload} {
+			if !mi(${shifttime}) & ${sctodownload} {
 				ds _all, has(format %tc* %tC*)
 				loc dtvars = r(varlist)
 				foreach var of loc dtvars {
