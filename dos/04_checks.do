@@ -19,10 +19,9 @@
                                                                                                                                                                                                        */
 
 
-																																																	   
-																																																	   
-																																																	   
-qui {
+                                                                                                                                                                                                                                                                                                                                                                                         	
+	                                                                                                                                                                                                                                                                                                                                                                                         	
+                                                                                                                                                                                                                                                                                                                                                                                         																																																																																																	qui {
 include 01_setup.do 
 	
 **# Create output file
