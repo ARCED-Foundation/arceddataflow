@@ -54,8 +54,8 @@
 	
 	* SurveyCTO API data download	
 	qui if ${sctodownload} {		
-		n di as input "SurveyCTO username:" _r(suser)
-		n di as input "SurveyCTO password:" _r(spass)
+		if mi("${suser}") n di as input "SurveyCTO username:" _r(suser)
+		if mi("${spass}") n di as input "SurveyCTO password:" _r(spass)
 		n di as text "Data download initiated..."
 		cls
 		sctoapi ${formid}, server(arced) username("${suser}") password("${spass}") ///
@@ -187,6 +187,12 @@
 					exit 459
 				}
 			}
+			
+			if !${warning} {
+				label data "Deidentified dateset. Updated by `=c(username)' on `=c(current_date)' `=c(current_time)'."
+				save "${deidentified}", replace 
+			}
+			
 		restore
 		
 		n di as result "PII Splitting done." _n
