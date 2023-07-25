@@ -121,8 +121,8 @@
 			
 			forval var =1/`corrcount' {	
 				loc _`var'_name 	= "`=variable[`var']'"
-				loc `var'_cmd_num 	= "qui replace `=variable[`var']'=" + string(`=correction[`var']') + `" if key==""' + key[`var'] + `"""'
-				loc `var'_cmd_str 	= "qui replace `=variable[`var']'=" + `"""'+ string(`=correction[`var']') + `"""' + `" if key==""' + key[`var'] + `"""'
+				loc `var'_cmd_num 	= "qui replace `=variable[`var']'=" + "`=correction[`var']'" + `" if key==""' + key[`var'] + `"""'
+				loc `var'_cmd_str 	= "qui replace `=variable[`var']'=" + `"""'+ "`=correction[`var']'" + `"""' + `" if key==""' + key[`var'] + `"""'
 				loc _`var'_value 	= "`=correction[`var']'"
 				loc _`var'_key 		= "`=key[`var']'"
 			}
