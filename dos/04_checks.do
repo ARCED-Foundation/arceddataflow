@@ -27,7 +27,7 @@ include 01_setup.do
 **# Create output file
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 
-	loc template 	= "https://github.com/ARCED-Foundation/arceddataflow/raw/master/assets/Check_report_template.xlsx"	
+	loc template 	= "https://github.com/ARCED-Foundation/arceddataflow/raw/master/assets/Check_report_template_v2.xlsx"	
 	gl outfile_hfc 			= subinstr("${outfile_hfc}", ".xlsx", "", .)
 	gl outfile_hfc_fixed 	= "${outfile_hfc}.xlsx"
 	gl outfile_hfc			= "`=subinstr("${outfile_hfc_fixed}", ".xlsx", "", .)'_`=c(current_date)'.xlsx"
@@ -139,7 +139,7 @@ include 01_setup.do
 			mat Enum [`i', 4] = `enumna'
 			mat Enum [`i', 5] = `enumother'
 			mat Enum [`i', 6] = `nomiss'
-			mat Enum [`i', 6] = `enumdur'
+			mat Enum [`i', 7] = `enumdur'
 			loc ++i
 		}
 
@@ -149,11 +149,11 @@ include 01_setup.do
 		clear
 		svmat Enum, names(col)
 		mat drop Enum
-		g dk_per 	= DK  	/ (DK  + NOMISS)
-		g ref_per 	= REF 	/ (REF + NOMISS)
-		g skip_per 	= SKIP 	/ (SKIP + NOMISS)
-		g na_per 	= NA   	/ (NA + NOMISS)
-		g other_per = OTHER	/ (OTHER + NOMISS)
+		g dk_per 	= DK  	/ (DK + NOMISS + REF + SKIP + NA + Other)
+		g ref_per 	= REF 	/ (DK + NOMISS + REF + SKIP + NA + Other)
+		g skip_per 	= SKIP 	/ (DK + NOMISS + REF + SKIP + NA + Other)
+		g na_per 	= NA   	/ (DK + NOMISS + REF + SKIP + NA + Other)
+		g other_per = OTHER	/ (DK + NOMISS + REF + SKIP + NA + Other))
 		
 		export excel 		dk_per	ref_per skip_per 	///
 							na_per other_per DURATION	///
