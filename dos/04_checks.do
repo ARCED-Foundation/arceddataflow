@@ -105,14 +105,29 @@ include 01_setup.do
 			loc nomiss 	= 0
 			
 			foreach var of loc numvars {
+				* Nomiss
 				count if !mi(`var') & ${enumid}=="`enum'"
 				loc nomiss = `nomiss' + r(N)
 				
+				* DK
 				count if `var'==.d & ${enumid}=="`enum'"
 				loc enumdk = `enumdk' + r(N)
 				
+				* Ref
 				count if `var'==.r & ${enumid}=="`enum'"
-				loc enumref = `enumref' + r(N)			
+				loc enumref = `enumref' + r(N)	
+				
+				* Skip
+				count if `var'==.s & ${enumid}=="`enum'"
+				loc enumskip = `enumskip' + r(N)	
+				
+				* NA
+				count if `var'==.n & ${enumid}=="`enum'"
+				loc enumna = `enumna' + r(N)	
+				
+				* Other
+				count if `var'==${other} & ${enumid}=="`enum'"
+				loc enumother = `enumother' + r(N)	
 			}
 			
 			sum duration if ${enumid}=="`enum'"
@@ -120,21 +135,28 @@ include 01_setup.do
 			
 			mat Enum [`i', 1] = `enumdk'
 			mat Enum [`i', 2] = `enumref'
-			mat Enum [`i', 3] = `nomiss'
-			mat Enum [`i', 4] = `enumdur'
+			mat Enum [`i', 3] = `enumskip'
+			mat Enum [`i', 4] = `enumna'
+			mat Enum [`i', 5] = `enumother'
+			mat Enum [`i', 6] = `nomiss'
+			mat Enum [`i', 6] = `enumdur'
 			loc ++i
 		}
 
-		mat colnames Enum = DK REF NOMISS DURATION
+		mat colnames Enum = DK REF SKIP NA OTHER NOMISS DURATION
 		mat list Enum
 		
 		clear
 		svmat Enum, names(col)
 		mat drop Enum
-		g dk_per 	= DK  / (DK  + NOMISS)
-		g ref_per 	= REF / (REF + NOMISS)
+		g dk_per 	= DK  	/ (DK  + NOMISS)
+		g ref_per 	= REF 	/ (REF + NOMISS)
+		g skip_per 	= SKIP 	/ (SKIP + NOMISS)
+		g na_per 	= NA   	/ (NA + NOMISS)
+		g other_per = OTHER	/ (OTHER + NOMISS)
 		
-		export excel 		dk_per	ref_per DURATION	///
+		export excel 		dk_per	ref_per skip_per 	///
+							na_per other_per DURATION	///
 							using "${outfile_hfc}", 	///
 							sh("EnumPerformance")		///
 							sheetmodify 				///

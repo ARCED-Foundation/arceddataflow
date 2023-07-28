@@ -218,6 +218,9 @@ qui {
 	
 	gl 	dk					"-99"
 	gl 	ref					"-98"
+	gl 	skip				"-97"
+	gl 	NA 					"-95"
+	gl 	other				"-96"
 	
 	gl 	enumcomments		"comments"
 	

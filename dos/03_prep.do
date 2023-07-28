@@ -275,11 +275,18 @@
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
 	qui {
-		if "${dk}" != "" loc dk_rec = "(`= trim(itrim(subinstr("${dk}", ",", " ", .)))' = .d)" 
-		if "${ref}"!= "" loc ref_rec = "(`= trim(itrim(subinstr("${ref}", ",", " ", .)))' = .r) "
+		if "${dk}" 		!= "" loc dk_rec 	= "(`= trim(itrim(subinstr("${dk}", ",", " ", .)))' = .d)" 
+		if "${ref}"		!= "" loc ref_rec 	= "(`= trim(itrim(subinstr("${ref}", ",", " ", .)))' = .r) "
+		if "${skip}"	!= "" loc skip_rec 	= "(`= trim(itrim(subinstr("${skip}", ",", " ", .)))' = .s) "
+		if "${NA}"		!= "" loc NA_rec 	= "(`= trim(itrim(subinstr("${NA}", ",", " ", .)))' = .n) "
+		
 		
 		ds, has(type numeric)
-		if !mi("${dk}") & !mi("${ref}") recode `r(varlist)' `dk_rec' `ref_rec'
+		if 	!mi("${dk}") 		| !mi("${ref}") ///
+			| !mi("${skip}")	| !mi("${NA}")	///
+			recode `r(varlist)' ///
+			`dk_rec' `ref_rec' 	///
+			`skip_rec' `NA_rec'	
 		
 		n di as result "Recoding extended missing values completed." _n
 	}
