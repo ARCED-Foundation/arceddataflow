@@ -234,17 +234,11 @@ qui {
 	* Outliers
 	gl	outkeepvars			""
 	gl 	sd					3
-	gl	comboutvars			"age_year_*  time_spent_* person_age_* age_* interact_time_* meet_people_*"
+	gl	comboutvars			"age_year_* "
 								
 							#d ;	
 	gl  outexclude			" 	activity_*	addplace collect_phone_app contacts 
 								eligible_*  totalrepeat rand* *_sl* select_mem_id_*
-								select_mem_num_* place_house_* *phone* hh_member_*
-								leave_hour_* leave_minute_* mem_base_* nextplace_*
-								memsl_* *consent* call_num memberbaseline memfilter 
-								no_answer_* num_call upazila union stop_at sex*
-								replaced_reason* age_month_* age_? age_?? district
-								reschedule* formdef_version extra_hours age_l_*
 							" ;	
 							#d cr	
 

@@ -845,12 +845,14 @@ include 01_setup.do
 						
 	n di as result  "Check 12 completed"	
 	
+
+	
 	
 	macro drop enumname			
 	copy  "${outfile_hfc}" "${outfile_hfc_fixed}", replace
 	n di _n  `"Check report is saved here: {browse "${outfile_hfc}":${outfile_hfc}}"'
 	n di   `"Correction logs are saved here: {browse "${correction_log}":${correction_log}}"'
-	!"${outfile_hfc_fixed}"
+	if ${warning} !"${outfile_hfc_fixed}"
 	
 	u "${cleandata}", clear
 }	
