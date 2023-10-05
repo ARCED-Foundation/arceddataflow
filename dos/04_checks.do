@@ -96,13 +96,16 @@ include 01_setup.do
 		ds, has(type numeric)	
 		loc numvars = "`r(varlist)'"
 		
-		matrix Enum = J(`: word count `enumids'', 4, .)
+		matrix Enum = J(`: word count `enumids'', 7, .)
 		
 		loc i = 1
-		qui foreach enum of loc enumids {
+		 foreach enum of loc enumids {
 			loc enumdk 	= 0
 			loc enumref = 0
 			loc nomiss 	= 0
+			loc enumskip= 0
+			loc enumna  = 0
+			loc enumother  = 0
 			
 			foreach var of loc numvars {
 				* Nomiss
@@ -149,11 +152,11 @@ include 01_setup.do
 		clear
 		svmat Enum, names(col)
 		mat drop Enum
-		g dk_per 	= DK  	/ (DK + NOMISS + REF + SKIP + NA + Other)
-		g ref_per 	= REF 	/ (DK + NOMISS + REF + SKIP + NA + Other)
-		g skip_per 	= SKIP 	/ (DK + NOMISS + REF + SKIP + NA + Other)
-		g na_per 	= NA   	/ (DK + NOMISS + REF + SKIP + NA + Other)
-		g other_per = OTHER	/ (DK + NOMISS + REF + SKIP + NA + Other))
+		g dk_per 	= DK  	/ (DK + NOMISS + REF + SKIP + NA + OTHER)
+		g ref_per 	= REF 	/ (DK + NOMISS + REF + SKIP + NA + OTHER)
+		g skip_per 	= SKIP 	/ (DK + NOMISS + REF + SKIP + NA + OTHER)
+		g na_per 	= NA   	/ (DK + NOMISS + REF + SKIP + NA + OTHER)
+		g other_per = OTHER	/ (DK + NOMISS + REF + SKIP + NA + OTHER)
 		
 		export excel 		dk_per	ref_per skip_per 	///
 							na_per other_per DURATION	///
@@ -161,7 +164,7 @@ include 01_setup.do
 							sh("EnumPerformance")		///
 							sheetmodify 				///
 							cell(S2) 					///
-							keepcellfmt  		
+							keepcellfmt  				
 	restore 
 	n di as result "Enumerators performance completed."
 
@@ -845,7 +848,93 @@ include 01_setup.do
 						
 	n di as result  "Check 12 completed"	
 	
+**# Check 13: Tracking
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*	
 
+	n di as input _n "Running Check 13: Tracking"
+	
+	* Import tracking data
+	u "${cleandata}", clear
+	
+	tostring ${enumid}, replace force
+	
+	if mi("${enumname}") {
+		cap g 	enumname = ${enumid}
+		gl 	enumname = "enumname"
+	}
+	
+	format ${starttime} %tc
+	
+	gen  __hour = hh(${starttime})
+	gen  __min	= mm(${starttime})
+	collapse (count)  total= __min, by(${startdate} __hour) fast
+	
+	sum total 
+	loc min = r(min)
+	loc max = r(max)
+	
+	reshape wide total, i(${startdate}) j(__hour)
+	
+	forval x=1/24 {
+		cap g total`x' = .
+	}
+	
+	order total*, seq
+	order ${startdate}, first
+	order total24, after(${startdate})
+	
+	
+	g 		mintime = `min' in 1
+	if _N<17 set obs 17
+	replace mintime = `max' in 17
+	
+		export 	excel 	using "${outfile_hfc}", ///
+						sheetmodify 			///
+						sh("C12a. DailyTimeUse")	///
+						cell(A5) keepcellfmt	
+						
+	
+	* Enum time use
+	u "${cleandata}", clear
+	
+	tostring ${enumid}, replace force
+	
+	if mi("${enumname}") {
+		cap g 	enumname = ${enumid}
+		gl 	enumname = "enumname"
+	}
+	
+	format ${starttime} %tc
+	
+	gen  __hour = hh(${starttime})
+	gen  __min	= mm(${starttime})
+	collapse (count)  total= __min (first) ${enumname}, by(${enumid} __hour) fast
+	
+	sum total 
+	loc min = r(min)
+	loc max = r(max)
+	
+	reshape wide total, i(${enumid} ${enumname}) j(__hour)
+	
+	forval x=1/24 {
+		cap g total`x' = .
+	}
+	
+	order total*, seq
+	order ${enumid} ${enumname}, first
+	order total24, after(${enumname})
+	
+	
+	g 		mintime = `min' in 1
+	if _N<17 set obs 17
+	replace mintime = `max' in 17
+	
+		export 	excel 	using "${outfile_hfc}", ///
+						sheetmodify 			///
+						sh("C12b. EnumTimeUse")	///
+						cell(A5) keepcellfmt	
+						
+	n di as result  "Check 13 completed"	
 	
 	
 	macro drop enumname			

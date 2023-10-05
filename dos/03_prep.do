@@ -321,9 +321,9 @@
 
 	
 	
-n di as result _col(15) "---------------------"
-n di as result _col(15) "|  Data cleanig done |"
-n di as result _col(15) "---------------------"
+n di as result _col(15) "----------------------"
+n di as result _col(15) "|  Data cleaning done |"
+n di as result _col(15) "----------------------"
 	
 	
 **# End
