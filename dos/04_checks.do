@@ -197,8 +197,15 @@ include 01_setup.do
 	
 **# Check 2: Summarize completed surveys by enumerator
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-	
+
 	n di as input _n "Running Check 2: Summarize completed surveys by enumerator"
+	
+	preserve 
+		collapse (first) ${consent} ${enumname}, by(${enumid} ${startdate})
+		tempfile __enumlist 
+		save 	`__enumlist'
+	restore
+	
 	preserve
 		keep if ${consent} == 1
 		format 	${startdate} %td	
@@ -207,6 +214,11 @@ include 01_setup.do
 
 		table 	 ${enumid} ${enumname} ${startdate}, replace		
 		ren table1 _d
+		
+		merge 1:1 ${enumid} ${enumname} ${startdate} using `__enumlist', gen(__merge_enum) keepusing(${enumid} ${enumname} ${startdate})
+		replace _d = 0 if __merge_enum==2 
+		drop __merge_enum
+		
 		reshape  wide _d, 		///
 				 i(${enumid}) 	///
 				 j(${startdate})
@@ -214,8 +226,8 @@ include 01_setup.do
 		egen total = rowtotal(_d*)
 		egen days  = rownonmiss(_d*)
 		
-		order  ${enumid} ${enumname} days total, first
-
+		order  ${enumid} ${enumname} days total, first 
+		
 		export excel 	using "${outfile_hfc}", ///
 						sh("C2. Productivity") 	///
 						sheetmodify 			///
@@ -941,7 +953,9 @@ include 01_setup.do
 	copy  "${outfile_hfc}" "${outfile_hfc_fixed}", replace
 	n di _n  `"Check report is saved here: {browse "${outfile_hfc}":${outfile_hfc}}"'
 	n di   `"Correction logs are saved here: {browse "${correction_log}":${correction_log}}"'
-	if ${warning} !"${outfile_hfc_fixed}"
+	if ${warning} {
+		!"${outfile_hfc_fixed}"
+	}
 	
 	u "${cleandata}", clear
 }	
