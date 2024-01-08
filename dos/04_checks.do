@@ -293,23 +293,29 @@ include 01_setup.do
 		preserve
 			keep if ${consent}==1
 			format 	${starttime} %tc
-
+			
+			loc rownum = 5
 			foreach var of global otherdupvars {
-				duplicates tag `var' if !mi(`var'), gen(`var'_dup)
-				sort `var' ${starttime}
-				count if `var'_dup>0 & !mi(`var')
-				if `=r(N)'>0 {
-					g __`var' = "`var'"
-					
-					export excel 	${sid} ${starttime} 			///
-									${enumid} ${enumname} 			///
-									 __`var' `var' ${uid} 			///
-									using "${outfile_hfc}"			///
-									if `var'_dup>0 & !mi(`var'), 	///
-									sh("C3b. OtherVarDups") 		///
-									sheetmodify 					///
-									cell(A5) 						///
-									keepcellfmt nolabel
+				count if !mi(`var')
+				if `=r(N)' {
+					duplicates tag `var' if !mi(`var'), gen(`var'_dup)
+					sort `var' ${starttime}
+					count if `var'_dup>0 & !mi(`var')
+					loc rowtotal = `=r(N)'
+					if `rowtotal'>0 {
+						g __`var' = "`var'"
+						
+						export excel 	${sid} ${starttime} 			///
+										${enumid} ${enumname} 			///
+										 __`var' `var' ${uid} 			///
+										using "${outfile_hfc}"			///
+										if `var'_dup>0 & !mi(`var'), 	///
+										sh("C3b. OtherVarDups") 		///
+										sheetmodify 					///
+										cell(A`rownum')					///
+										keepcellfmt nolabel
+					}
+					loc rownum = `rownum' + `rowtotal' 
 				}
 			}
 			
