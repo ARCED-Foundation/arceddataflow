@@ -91,11 +91,14 @@ qui {
 		gl timeshift 		"6"  		/* 	When data downloaded through API, the time is UTC, 
 											so for Bangladesh the default is UTC+6 to shift to local time */
 		
-	gl 	odkdownload				0		// Download data from ARCED ODK server	
+	gl 	odkdownload				1		// Download data from ARCED ODK server	
 		* Globals for ARCED ODK server api download
 		*------------------------------------------
+		gl OData 		"https://sotlab.eastus.cloudapp.azure.com/v1/projects/17/forms/skills_for_growth_listing.svc"
+		gl odkapi 		`"`=regexr("$OData", ".svc", "/submissions.csv.zip")'"'
+		
 	
-	gl	manualdownload			1		// Download data manually	
+	gl	manualdownload			0		// Download data manually	
 		* Globals for manual download
 		*----------------------------
 		gl 	sctodesktoploc	"C:\Users\\`=c(username)'\AppData\local\Programs\SurveyCTODesktop\SurveyCTO Desktop.exe"
@@ -139,7 +142,8 @@ qui {
 	--------------------------------------------------------------------------*/
 	
 	** Data files
-	gl 	container			"${cwd}/../03_Data/02_Raw/rawdata_phone"
+	gl  rawpath				"${cwd}/../03_Data/02_Raw"
+	gl 	container			"${cwd}/../03_Data/02_Raw/rawdata"
 	gl 	rawdata				"X:/Social Contact Survey 2023_WIDE.csv"
 	gl 	rawdatadta			`"`=regexr("${rawdata}", ".csv", ".dta")'"'
 	gl	mediafolder			"X:/media"

@@ -65,6 +65,23 @@
 		n di as result "Data download done." _n
 	}
 	
+	* ODK central API data download	
+	qui if ${odkdownload} {		
+		if mi("${Ouser}") n di as input "ODK username:" _r(Ouser)
+		if mi("${Opass}") n di as input "ODK password:" _r(Opass)
+		n di as text "Data download initiated..."
+		cls
+		
+		gl rawzip  `"`=regexr("${rawdata}", ".csv", ".zip")'"'
+		!curl -X GET ${odkapi} --output "${rawzip}" -groupPaths=false -deletedFields=true -u "${Ouser}":"${Opass}"  --ssl-no-revoke 
+		
+		cd "$rawpath"		
+		unzipfile 	"${rawzip}", ifilter(`"(.*\.(csv|png)$)"') replace
+		cd "$cwd"
+		
+		n di as result "Data download done." _n
+	}
+	
 	
 **# Data labeling
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
@@ -93,6 +110,8 @@
 					replace `var' = `var' + ${timeshift}*60*60*1000
 				}				
 			}
+			
+			if ${odkdownload} replace submissiondate = submissiondate + ${timeshift}*60*60*1000
 			
 			* Save dta file
 			compress
