@@ -73,6 +73,10 @@ qui {
 	if _rc 		net install arced_mount_file, all replace ///
 				from("https://raw.githubusercontent.com/ARCED-Foundation/arceddataflow/master/ados")
 	
+	** Install graph scheme
+	cap conf file 	"01_Ado/s/scheme-white_w3d.scheme"
+	if _rc 		ssc install schemepack, replace
+	
 **# Switches
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 

@@ -864,6 +864,76 @@ include 01_setup.do
 						sh("C12b. EnumTimeUse")	///
 						cell(A5) keepcellfmt	
 						
+
+	* Graph for today
+	
+	graph set window fontface "Calibri"
+	set scheme white_tableau	
+	set graphics off
+	
+	u "${cleandata}", clear
+	
+	tostring ${enumid}, replace force
+	
+	if mi("${enumname}") {
+		cap g 	enumname = ${enumid}
+		gl 	enumname = "enumname"
+	}
+	
+	encode ${enumname}, gen(enum_name)
+	
+	format ${starttime} %tc
+	
+	sum ${startdate} 
+	
+	keep if ${startdate} == r(max)
+	keep ${starttime} ${endtime} ${enumid} ${enumname} ${consent} ${uid} enum_name
+
+	ren ${starttime} 	time1
+	ren ${endtime}	 	time2
+	reshape long  time, i(${uid}) j(time_sl)
+	format time %tc+hh+:+MM+am
+	
+	levelsof key, local(options)
+	local wordcount : word count `options'
+
+	local i = 1
+	foreach option of local options {  
+		local  scatter `scatter' scatter enum_name time  if key == "`option'" & consent==1, ///
+				msymbol(pipe) c(l) pstyle(p3arrow) lcolor(green%50) ||
+
+		local  scatter2 `scatter2' scatter enum_name time  if key == "`option'" & consent!=1, ///
+				msymbol(x) c(l) pstyle(p2arrow) lcolor(red%50) ||
+
+		local ++i
+	}
+	 
+	su time 
+	loc max = r(max)
+	loc min = r(min)
+	
+	
+	twoway  `scatter2' `scatter', ///
+		title("{bf}Date: `=c(current_date)'", pos(11) size(2.75)) ///
+		ytitle("", size(2)) ///
+		xtitle("") ///
+		ylabel(#15, valuelabel labsize(2)) ///
+		xlabel(`min'(3600000)`max',   labsize(2)) ///
+		legend(order(`i' "Done survey" 1 "Not successful survey") ///
+				pos(6) row(1) size(2)) name(enumtime)
+
+	graph draw enumtime, ysize(12) xsize(15) 
+	
+	tempfile combined
+	graph export `combined', replace name(enumtime) as(png) width(1200)
+	gr close
+
+	
+	putexcel set "${outfile_hfc}", sheet("C12b. EnumTimeUse") modify
+	putexcel AB4 = picture(`combined')
+	putexcel clear
+	
+						
 	n di as result  "Check 12 completed"	
 	
 **# Check 13: Tracking
