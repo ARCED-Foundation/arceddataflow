@@ -93,7 +93,8 @@
 			
 			if !mi("${language}") loc label = "label(${language})"
 			insheet using "${rawdata}", clear names
-		
+			cap ren formversion formdef_version
+			
 			tempfile 	rawdata
 			save		`rawdata'
 			

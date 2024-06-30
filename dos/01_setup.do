@@ -81,7 +81,28 @@ qui {
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 
 	**# Data sources
-	*---------------------------	
+	*---------------------------
+	
+	/*----------------------------------------------------------------
+	
+		The sctodownload and odkdownload prompts for the username
+		and password. If you want not to type the username and 
+		password on the command window, you can setup profile.do
+		to set the username and password. Read more:
+		https://www.stata.com/support/faqs/programming/profile-do-file
+		https://www.techtips.surveydesign.com.au/post/the-profile-and-sysprofile-do-files-automating-your-stata-start-up
+		
+		In the profile.do set the following globals:
+		
+		* SurveyCTO credentials
+		gl suser = "xxxxx" 
+		gl spass = "yyyyy"
+		
+		* ODK credentials
+		gl Ouser = "xxxxx"
+		gl Opass = "yyyyy"
+	
+	-----------------------------------------------------------------*/
 	
 	gl 	sctodownload			0		// Download data from SurveyCTO		
 		* Globals for SurveyCTO api download
@@ -103,7 +124,7 @@ qui {
 		*----------------------------
 		gl 	sctodesktoploc	"C:\Users\\`=c(username)'\AppData\local\Programs\SurveyCTODesktop\SurveyCTO Desktop.exe"
 	
-
+		
 	
 	**# Actions
 	*---------------------------
