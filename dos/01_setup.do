@@ -181,6 +181,7 @@ qui {
 	gl  correction_log		"${cwd}/../04_Output/01_Logs/Correction_log_`c(current_date)'.xlsx"
 	
 	** Outfile
+	gl 	outpath			"${cwd}/../04_Output/02_Checks"
 	gl 	outfile_hfc			"${cwd}/../04_Output/02_Checks/Check_report.xlsx"
 	
 	** 	audio_audit folder

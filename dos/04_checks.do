@@ -894,15 +894,15 @@ include 01_setup.do
 	reshape long  time, i(${uid}) j(time_sl)
 	format time %tc+hh+:+MM+am
 	
-	levelsof key, local(options)
+	levelsof ${uid}, local(options)
 	local wordcount : word count `options'
 
 	local i = 1
 	foreach option of local options {  
-		local  scatter `scatter' scatter enum_name time  if key == "`option'" & consent==1, ///
+		local  scatter `scatter' scatter enum_name time  if ${uid} == "`option'" & ${consent}==1, ///
 				msymbol(pipe) c(l) pstyle(p3arrow) lcolor(green%50) ||
 
-		local  scatter2 `scatter2' scatter enum_name time  if key == "`option'" & consent!=1, ///
+		local  scatter2 `scatter2' scatter enum_name time  if ${uid} == "`option'" & ${consent}!=1, ///
 				msymbol(x) c(l) pstyle(p2arrow) lcolor(red%50) ||
 
 		local ++i
@@ -924,14 +924,22 @@ include 01_setup.do
 
 	graph draw enumtime, ysize(12) xsize(15) 
 	
-	tempfile combined
-	graph export `combined', replace name(enumtime) as(png) width(1200)
-	gr close
-
-	
-	putexcel set "${outfile_hfc}", sheet("C12b. EnumTimeUse") modify
-	putexcel AB4 = picture(`combined')
-	putexcel clear
+	if `=c(stata_version)' >= 15 {
+		version 15
+		tempfile combined
+		graph export `combined', replace name(enumtime) as(png) width(1200)
+		gr close enumtime
+		
+		putexcel set "${outfile_hfc}", sheet("C12b. EnumTimeUse") modify
+		putexcel AB4 = picture(`combined')
+		putexcel clear		
+	}
+	else {
+		graph export "${outpath}/EnumTimeUse_`c(current_date)'.png", ///
+					replace name(enumtime) as(png) width(1200)
+		gr close enumtime
+		
+	}
 	
 						
 	n di as result  "Check 12 completed"	
