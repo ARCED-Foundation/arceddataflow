@@ -204,12 +204,12 @@
 		tempfile droplist 
 		save	`droplist'
 		
-		u `c_maindata', clear 
 		
 		* Apply drops 
 		if `totaldrops'>0 {
 			duplicates tag key, gen(__dup)
 			count if __dup>0 
+
 			if r(N) > 0 {
 				n di as err _n  "There are duplicate keys in the droplist sheet" 
 				n list key if __dup>0, sepby(key) divider fast abbreviate(15) 
@@ -238,6 +238,7 @@
 			
 			if `dropped'>0 n di as result "`dropped' submissions dropped successfully" _n
 			drop merge_drop
+			u `c_maindata', clear
 			
 			if `=wordcount("`_keynotfound'")'>0 {
 				n di as err "These keys do not exist in data: " "`_keynotfound'" _n
