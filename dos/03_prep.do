@@ -238,7 +238,7 @@
 			
 			if `dropped'>0 n di as result "`dropped' submissions dropped successfully" _n
 			drop merge_drop
-			u `c_maindata', clear
+			save `c_maindata', replace
 			
 			if `=wordcount("`_keynotfound'")'>0 {
 				n di as err "These keys do not exist in data: " "`_keynotfound'" _n
