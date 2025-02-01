@@ -911,16 +911,18 @@ include 01_setup.do
 	su time 
 	loc max = r(max)
 	loc min = r(min)
+	levelsof enumid
+	loc ylab = r(r)
 	
 	
 	twoway  `scatter2' `scatter', ///
 		title("{bf}Date: `=c(current_date)'", pos(11) size(2.75)) ///
 		ytitle("", size(2)) ///
 		xtitle("") ///
-		ylabel(#15, valuelabel labsize(2)) ///
+		ylabel(#`ylab', valuelabel labsize(2)) ///
 		xlabel(`min'(3600000)`max',   labsize(2)) ///
 		legend(order(`i' "Done survey" 1 "Not successful survey") ///
-				pos(6) row(1) size(2)) name(enumtime)
+				pos(6) row(1) size(2)) name(enumtime, replace)
 
 	graph draw enumtime, ysize(12) xsize(15) 
 	
