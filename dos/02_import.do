@@ -76,7 +76,7 @@
 		!curl -X GET ${odkapi} --output "${rawzip}" -groupPaths=false -deletedFields=true -u "${Ouser}":"${Opass}"  --ssl-no-revoke 
 		
 		cd "$rawpath"		
-		unzipfile 	"${rawzip}", ifilter(`"(.*\.(csv|png)$)"') replace
+		unzipfile 	"${rawzip}", replace
 		cd "$cwd"
 		
 		n di as result "Data download done." _n
