@@ -100,7 +100,7 @@
 			
 			* Label dataset using XLSForm
 			qui odksplit, 	data(`rawdata') survey("${xlsform}") ///
-							clear dateformat(MDY) `label'
+							clear dateformat(${dateformat}) `label'
 			
 			
 			* Fix for time shift
