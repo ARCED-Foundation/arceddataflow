@@ -289,6 +289,10 @@
 		insheet using "${rawtextaudit}", names clear
 		keep instanceid node start end
 		replace node = subinstr(node, "/", "", 1)
+
+		format %tc start end 
+		gen totaldurationseconds = end-start
+		format totaldurationseconds %tcSS
 	}
 		
 **# Prepare Comment data
