@@ -221,7 +221,7 @@
 **# Prepare Text Audit data
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 	
-	if !mi("${text_audit}") qui {
+	if !mi("${text_audit}") & ${manualdownload} qui {
 		n di as text "Text audit data preparation initiated..."
 		
 		clear 
@@ -284,8 +284,8 @@
 		}
 	}
 
-	if ${odkdownload}==1{
-		
+	if ${odkdownload}{
+
 	}
 		
 **# Prepare Comment data
