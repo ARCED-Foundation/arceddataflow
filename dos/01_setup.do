@@ -237,6 +237,7 @@ qui {
 	gl	sctocomments		""
 	gl 	uid					"key"
 	gl 	sid					"id"
+	gl  dateformat          "DMY"
 	
 							#d ;	
 	gl  PIIs				" 	upazilaname unionname villagename	gps* 
