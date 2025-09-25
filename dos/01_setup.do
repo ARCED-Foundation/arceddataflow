@@ -167,6 +167,7 @@ qui {
 	gl 	container			"${cwd}/../03_Data/02_Raw/rawdata"
 	gl 	rawdata				"X:/Social Contact Survey 2023_WIDE.csv"
 	gl 	rawdatadta			`"`=regexr("${rawdata}", ".csv", ".dta")'"'
+	gl 	rawtextaudit 		`"`=regexr("${rawdata}", ".csv", " - audit.csv")'"'
 	gl	mediafolder			"X:/media"
 	
 	gl 	deidentified		"${cwd}/../03_Data/04_Intermediate/Social Contact Survey 2023.dta"
