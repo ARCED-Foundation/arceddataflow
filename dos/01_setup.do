@@ -232,7 +232,7 @@ qui {
 	--------------------------------------------------------------------------*/
 	
 	gl 	xlsform				"${cwd}/../01_Instruments/02_XLSForm/Social Contact Survey_23.xlsx"	
-	gl 	media				"audio_audit text_audit"
+	gl 	media				"audio_audit audit"
 	gl 	text_audit			"text_audit"
 	gl	sctocomments		""
 	gl 	uid					"key"
