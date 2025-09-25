@@ -285,9 +285,10 @@
 	}
 
 	if ${odkdownload}{
-		
-		insheet using "${rawtextaudit}", names clear
 
+		insheet using "${rawtextaudit}", names clear
+		keep instanceid node start end
+		replace node = subinstr(node, "/", "", 1)
 	}
 		
 **# Prepare Comment data
