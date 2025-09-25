@@ -111,26 +111,32 @@ qui {
 		gl sctodataloc		"X:"
 		gl timeshift 		"6"  		/* 	When data downloaded through API, the time is UTC, 
 											so for Bangladesh the default is UTC+6 to shift to local time */
-		**# --- ODK Data API Setup ---
-	/*---------------------------------------
+
+		**# ODK Data API Setup
+		*---------------------------
+	/*-----------------------------------------------------------------
 	
-		This section sets up the global macros needed to connect to and 
-		stream data directly from the ODK Central server using its API.
-		
 		OData: This macro stores the base URL for the form's OData service.
+		Using this URL, the program constructs the full API endpoint to download
+		the submissions in the server as a CSV format.
 		
-		Global for ODK API download URL.
+		To download data from the ARCED ODK server, you must Set the switch 
+		for "gl odkdownload" to "1 (on)". Obtain the "OData link" 
+		from your ODK Central server (via the 'Connect Data' button in the 
+		Submissions tab). Paste this link into the "gl OData" macro 
+		within the "ODK Data API Setup" section. 
+		
 		How to get the ODK URL:
 		
-		   1. Log in to your ODK Central account.
-		   2. Go to the 'Projects' section and select your specific project.
-		   3. Navigate to the 'Submissions' tab.
-		   4. Click the 'Connect Data' button to generate a unique URL for this 
-		      form.
-		   5. Paste the generated URL below in the `gl OData` macro. Global 
-		      for ODK API base URL.
+		   - Log in to your ODK Central account.
+		   - Go to the 'Projects' section and select your specific project.
+		   - Navigate to the 'Submissions' tab.
+		   - Click the 'Connect Data' button to generate an unique URL for this 
+		     form.
+		   - Paste the generated URL below in the "gl OData" macro. Global 
+		     for ODK API base URL.
 			   
-		----------------------------------------*/
+		-----------------------------------------------------------------*/
 
 	gl 	odkdownload				1		// Download data from ARCED ODK server	
 		* Globals for ARCED ODK server api download
@@ -159,9 +165,6 @@ qui {
 	*---------------------------
 	gl	warning 				1
 	gl	encrypt 				1
-	
-	
-	
 	
 **# File paths
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
