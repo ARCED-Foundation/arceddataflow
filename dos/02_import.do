@@ -296,6 +296,8 @@
 
 		drop start end
 		rename (instanceid node totaldurationseconds)(key fieldname totaldurationseconds)
+		save "${textauditdata}", replace
+
 	}
 		
 **# Prepare Comment data
