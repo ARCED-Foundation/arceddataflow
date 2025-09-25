@@ -1,4 +1,4 @@
-                                                                                                                                                                                                      /*
+                                                                                                                                                                                                       /*
 ╔═══════════════════════════════════════════════════════════════════════════════╗
 ║                 __  __  ___ __     _____          __    ___ __                ║
 ║             /\ |__)/  `|__ |  \   |__/  \|  ||\ ||  \ /\ ||/  \|\ |           ║
@@ -111,6 +111,26 @@ qui {
 		gl sctodataloc		"X:"
 		gl timeshift 		"6"  		/* 	When data downloaded through API, the time is UTC, 
 											so for Bangladesh the default is UTC+6 to shift to local time */
+		**# --- ODK Data API Setup ---
+	/*---------------------------------------
+	
+		This section sets up the global macros needed to connect to and 
+		stream data directly from the ODK Central server using its API.
+		
+		OData: This macro stores the base URL for the form's OData service.
+		
+		Global for ODK API download URL.
+		How to get the ODK URL:
+		
+		   1. Log in to your ODK Central account.
+		   2. Go to the 'Projects' section and select your specific project.
+		   3. Navigate to the 'Submissions' tab.
+		   4. Click the 'Connect Data' button to generate a unique URL for this 
+		      form.
+		   5. Paste the generated URL below in the `gl OData` macro. Global 
+		      for ODK API base URL.
+			   
+		----------------------------------------*/
 		
 	gl 	odkdownload				1		// Download data from ARCED ODK server	
 		* Globals for ARCED ODK server api download
