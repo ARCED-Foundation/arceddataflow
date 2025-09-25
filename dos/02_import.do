@@ -293,6 +293,9 @@
 		format %tc start end 
 		gen totaldurationseconds = end-start
 		format totaldurationseconds %tcSS
+
+		drop start end
+		rename (instanceid node totaldurationseconds)(key fieldname totaldurationseconds)
 	}
 		
 **# Prepare Comment data
