@@ -131,7 +131,7 @@ qui {
 		      for ODK API base URL.
 			   
 		----------------------------------------*/
-		
+
 	gl 	odkdownload				1		// Download data from ARCED ODK server	
 		* Globals for ARCED ODK server api download
 		*------------------------------------------
@@ -173,9 +173,15 @@ qui {
 						program will notify and automatically create the
 						container using VeraCrypt. 
 						
-		rawdata 		The name of the raw csv data. The path is by default 
+		rawpath 		The name of the raw csv data. The path is by default 
 						X:/ because the encrypted container will be mounted
 						on X:/ drive. Don't change that.
+
+		rawdata		    In our new dataflow system, the raw data file will be 
+						named using the form's unique ID, which is a change 
+						from our previous method of using the form name. To get 
+						the form ID, go to the settings section of the form in 
+						ODK Central and copy the ID from there.
 						
 		deidentified	The name and path of the deidentified dataset. This
 						dataset will not be encrypted.						
@@ -183,9 +189,9 @@ qui {
 	--------------------------------------------------------------------------*/
 	
 	** Data files
-	gl  rawpath				"${cwd}/../03_Data/02_Raw"
+	gl  rawpath				"X:"
 	gl 	container			"${cwd}/../03_Data/02_Raw/rawdata"
-	gl 	rawdata				"X:/Social Contact Survey 2023_WIDE.csv"
+	gl 	rawdata				"X:/rmg_environmental_survey_2025.csv"
 	gl 	rawdatadta			`"`=regexr("${rawdata}", ".csv", ".dta")'"'
 	gl	mediafolder			"X:/media"
 	
