@@ -285,6 +285,8 @@
 	}
 
 	if ${odkdownload}{
+		
+		insheet using "${rawtextaudit}", names clear
 
 	}
 		
