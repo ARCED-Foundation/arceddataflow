@@ -33,6 +33,9 @@ arceddataflow, 	do("C:\Users\Mehrab Ali\Projects\New Project") ///
 		project("Project ABC")
 ```
 
+## :rocket: DataFlow
+arceddataflow grew into [DataFlow](https://letdataflow.com), a desktop app from ARCED International that runs the same data-quality checks on every sync from SurveyLoopr, SurveyCTO, ODK Central or KoboToolbox, keeps a log of every correction, and still exports a Stata do-file that rebuilds the clean data from the raw data. [DataFlow and Stata high-frequency checks](https://letdataflow.com/compare/stata-high-frequency-checks) compares the two ways of working; arceddataflow stays free and open source.
+
 ## :mage: Author
 <a href="https://arced.foundation/mehrab-ali" target="_blank">Mehrab Ali</a>
 
